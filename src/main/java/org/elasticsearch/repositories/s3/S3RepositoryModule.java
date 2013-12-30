@@ -41,6 +41,5 @@ public class S3RepositoryModule extends AbstractModule {
         bind(Repository.class).to(S3Repository.class).asEagerSingleton();
         bind(IndexShardRepository.class).to(BlobStoreIndexShardRepository.class).asEagerSingleton();
     }
-
 }
 
