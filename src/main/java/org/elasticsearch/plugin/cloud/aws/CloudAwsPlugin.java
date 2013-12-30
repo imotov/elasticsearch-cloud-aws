@@ -73,9 +73,27 @@ public class CloudAwsPlugin extends AbstractPlugin {
         return services;
     }
 
-    public void onModule(RepositoriesModule repositoriesModule) {
-        if (settings.getAsBoolean("cloud.enabled", true)) {
-            repositoriesModule.registerRepository(S3Repository.TYPE, S3RepositoryModule.class);
+    @Override
+    public void processModule(Module module) {
+        if (isSnapshotReady()
+                && settings.getAsBoolean("cloud.enabled", true)
+                && module instanceof RepositoriesModule) {
+            ((RepositoriesModule)module).registerRepository(S3Repository.TYPE, S3RepositoryModule.class);
         }
+    }
+
+    /**
+     * Check if current elasticsearch version will be able to use snapshot and restore features
+     * @return true if we can use snapshot and restore
+     */
+    public static boolean isSnapshotReady() {
+        try {
+            // We check if the plugin is running with an old elasticsearch version (< 1.0.0)
+            Class.forName("org.elasticsearch.snapshots.Snapshot");
+        } catch (ClassNotFoundException e) {
+            return false;
+        }
+
+        return true;
     }
 }
