@@ -137,8 +137,4 @@ public class AbstractS3BlobContainer extends AbstractBlobContainer {
         return keyPath + blobName;
     }
 
-    protected boolean shouldRetry(AmazonS3Exception e) {
-        return e.getStatusCode() == 400 && "RequestTimeout".equals(e.getErrorCode());
-    }
-
 }

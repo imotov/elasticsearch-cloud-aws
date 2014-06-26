@@ -19,7 +19,7 @@
 
 package org.elasticsearch.cloud.aws.blobstore;
 
-import com.amazonaws.services.s3.model.AmazonS3Exception;
+import com.amazonaws.AmazonClientException;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import org.elasticsearch.common.blobstore.BlobPath;
 import org.elasticsearch.common.blobstore.ImmutableBlobContainer;
@@ -56,8 +56,8 @@ public class S3ImmutableBlobContainer extends AbstractS3BlobContainer implements
                         blobStore.client().putObject(blobStore.bucket(), buildKey(blobName), is, md);
                         listener.onCompleted();
                         return;
-                    } catch (AmazonS3Exception e) {
-                        if (shouldRetry(e) && retry < blobStore.numberOfRetries()) {
+                    } catch (AmazonClientException e) {
+                        if (retry < blobStore.numberOfRetries()) {
                             try {
                                 is.reset();
                             } catch (IOException ex) {
